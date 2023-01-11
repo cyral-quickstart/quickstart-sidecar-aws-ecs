@@ -60,14 +60,6 @@ locals {
           "name"  = "CYRAL_SIDECAR_ENDPOINT"
           "value" = var.sidecar_dns_name
         },
-        {
-          "name"  = "CYRAL_MONGODB_PORT_ALLOC_RANGE_LOW"
-          "value" = tostring(var.mongodb_port_alloc_range_low)
-        },
-        {
-          "name"  = "CYRAL_MONGODB_PORT_ALLOC_RANGE_HIGH"
-          "value" = tostring(var.mongodb_port_alloc_range_high)
-        },
       ]
       # Define the log configuration, where sidecar will ship
       # the container logs to. For more information, see the

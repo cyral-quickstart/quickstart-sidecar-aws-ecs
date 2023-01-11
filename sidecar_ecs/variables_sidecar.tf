@@ -36,28 +36,6 @@ variable "sidecar_ports" {
   type = list(number)
 }
 
-variable "mongodb_port_alloc_range_low" {
-  description = <<EOF
-Initial value for MongoDB port allocation range. The consecutive ports in the
-range `mongodb_port_alloc_range_low:mongodb_port_alloc_range_high` will be used
-for mongodb cluster monitoring. All the ports in this range must be listed in
-`sidecar_ports`.
-EOF
-  type        = number
-  default = 27017
-}
-
-variable "mongodb_port_alloc_range_high" {
-  description = <<EOF
-Final value for MongoDB port allocation range. The consecutive ports in the
-range `mongodb_port_alloc_range_low:mongodb_port_alloc_range_high` will be used
-for mongodb cluster monitoring. All the ports in this range must be listed in
-`sidecar_ports`.
-EOF
-  type        = number
-  default = 27029
-}
-
 variable "sidecar_dns_name" {
   description = "The fully qualified sidecar domain name. If there's no DNS for the sidecar, use the load balancer DNS instead."
   type = string

@@ -45,12 +45,6 @@ the sidecar container into the AWS ECS. See the [sidecar_ecs_resources.tf](./sid
 Define the sidecar container definition configuration. See the [sidecar_container_definition.tf](./sidecar_ecs/sidecar_container_definition.tf) file. This configuration consists of a list of valid task container definition parameters. For a detailed description of what parameters are available, see the [Task Definition Parameters](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html) in the
 official AWS Developer Guide.
 
-## Configure the sidecar for MongoDB cluster
-In case you're using a sidecar for a MongoDB cluster, it will be necessary
-to configure the MongoDB port allocation range thats going to be used by
-the sidecar for cluster monitoring. See the `mongodb_port_alloc_range_low` 
-and `mongodb_port_alloc_range_high` variables in the [variables_sidecar.tf](./sidecar_ecs/variables_sidecar.tf) file.
-
 ## Next steps
 In this guide, we described how to deploy and configure a single container sidecar into the AWS ECS. 
 To learn how to access a repository through the sidecar, see the documentation
