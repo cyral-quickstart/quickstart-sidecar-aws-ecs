@@ -13,7 +13,7 @@ locals {
       # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/private-auth.html
       repositoryCredentials = (
         {
-          credentialsParameter = var.registry_credentials_secret_arn
+          credentialsParameter = aws_secretsmanager_secret.repo_creds.arn
         }
       )
       cpu       = var.ecs_cpu
@@ -30,11 +30,12 @@ locals {
       secrets = [
         {
           name      = "CYRAL_SIDECAR_CLIENT_ID"
-          valueFrom = var.sidecar_client_id_ssm_parameter_arn
+          valueFrom = aws_ssm_parameter.sidecar_client_id.arn
+
         },
         {
           name      = "CYRAL_SIDECAR_CLIENT_SECRET"
-          valueFrom = var.sidecar_client_secret_ssm_parameter_arn
+          valueFrom = aws_ssm_parameter.sidecar_client_secret.arn
         }
       ]
       # The sidecar environment variables thats going to be used
@@ -47,10 +48,6 @@ locals {
         {
           "name"  = "CYRAL_SIDECAR_ID"
           "value" = var.sidecar_id
-        },
-        {
-          "name"  = "CYRAL_REPOSITORIES_SUPPORTED"
-          "value" = join(",", var.repositories_supported)
         },
         {
           "name"  = "CYRAL_SIDECAR_VERSION"
@@ -70,7 +67,7 @@ locals {
         options       = {
           "awslogs-create-group"  = "true",
           "awslogs-group"         = "/ecs/${local.ecs.container_name}/",
-          "awslogs-region"        = "${var.aws_region}",
+          "awslogs-region"        = data.aws_region.current.name,
           "awslogs-stream-prefix" = "cyral-logs"
         }
       }

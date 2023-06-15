@@ -7,12 +7,12 @@ locals {
 }
 
 variable "control_plane" {
-  description = "The address of the Cyral control plane. E.g.: '<tenant>.cyral.com'"
+  description = "The address of the Cyral Control Plane. E.g.: '<tenant>.app.cyral.com'"
   type = string
 }
 
 variable "sidecar_id" {
-  description = "The sidecar identifier."
+  description = "The sidecar identifier provided by the Control Plane."
   type = string
 }
 
@@ -21,14 +21,14 @@ variable "sidecar_version" {
   type = string
 }
 
-variable "repositories_supported" {
-  description = "List of all repository types that will be supported by the sidecar (lower case only)."
-  type = list(string)
-  default = [
-    "denodo", "dremio", "dynamodb", "mongodb", "mysql", 
-    "oracle", "postgresql", "redshift", "rest", "snowflake",
-    "sqlserver", "s3"
-  ]
+variable "client_id" {
+  description = "Sidecar Client ID provided by the Control Plane"
+  type = string
+}
+
+variable "client_secret" {
+  description = "Sidecar Client Secret provided by the Control Plane"
+  type = string
 }
 
 variable "sidecar_ports" {

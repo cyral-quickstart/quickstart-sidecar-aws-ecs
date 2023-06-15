@@ -5,6 +5,13 @@ data "aws_ecs_cluster" "existent_cluster" {
   cluster_name = var.ecs_cluster_name
 }
 
+# Use all subnets within the VPC
+data "aws_subnets" "all_subnets" {
+  filter {
+    name   = "vpc-id"
+    values = [var.sidecar_vpc_id]
+  }
+}
 # If the cluster_name is empty, it will create a new ECS
 # cluster and use it to deploy the sidecar.
 resource "aws_ecs_cluster" "sidecar_cluster" {
@@ -24,14 +31,81 @@ resource "aws_ecs_cluster_capacity_providers" "sidecar_capacity_provider" {
     capacity_provider = "FARGATE"
   }
 }
+# Security group for the sidecar task.
+resource "aws_security_group" "sidecar_sg" {
+  name        = "${local.sidecar.name_prefix}-sidecar-container-sg"
+  description = "Allow inbound access to sidecar ports"
+  # Allow the healthcheck to work
+  ingress {
+    from_port   = 9000
+    to_port     = 9000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
+  dynamic "ingress" {
+    for_each = var.sidecar_ports
+    content {
+      from_port   = ingress.value
+      to_port     = ingress.value
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+# Setup load balancer for the sidecar task.
+resource "aws_lb" "sidecar_nlb" {
+  name                       = "sidecar-nlb"
+  load_balancer_type         = "network"
+  internal                   =  var.load_balancer_scheme == "internet-facing" ? false : true
+  subnets                    = data.aws_subnets.all_subnets.ids
+  enable_deletion_protection = false
+  tags = {
+    Name = "${local.sidecar.name_prefix}-sidecar-container-sg"
+  }
+}
+
+resource "aws_lb_listener" "sidecar_listener" {
+  for_each          = { for port in var.sidecar_ports : tostring(port) => port }
+  load_balancer_arn = aws_lb.sidecar_nlb.arn
+  port              = each.value
+  protocol          = "TCP"
+
+  default_action {
+    type = "forward"
+    target_group_arn = aws_lb_target_group.sidecar_tg[each.key].arn
+  }
+}
+
+resource "aws_lb_target_group" "sidecar_tg" {
+  for_each = { for port in var.sidecar_ports : tostring(port) => port }
+
+  name        = "sidecar-tg-${each.key}"
+  port        = each.value
+  protocol    = "TCP"
+  vpc_id      = var.sidecar_vpc_id
+  target_type = "ip"
+  health_check {
+    port     = 9000
+    protocol = "HTTP"
+    path     = "/health"
+  }
+}
 # Define the task definition for the sidecar container.
 # See the sidecar_container_definition.tf file to configure 
 # the container definitions.
 resource "aws_ecs_task_definition" "sidecar_task_definition" {
   family                   = "${local.sidecar.name_prefix}-sidecar-task"
-  execution_role_arn       = var.execution_iam_role_arn
-  task_role_arn            = var.sidecar_iam_role_arn
+  execution_role_arn       = aws_iam_role.sidecar_ecs_role.arn
+  #task_role_arn            = var.sidecar_iam_role_arn
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.ecs_cpu
@@ -51,19 +125,19 @@ resource "aws_ecs_service" "sidecar_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets         = var.sidecar_subnet_ids
-    security_groups = var.sidecar_security_group_ids
+    subnets          = data.aws_subnets.all_subnets.ids
+    security_groups  = [aws_security_group.sidecar_sg.id]
     assign_public_ip = true
   }
   # For each service port, a load balancer target group
   # will be mapped to the respective sidecar container
   # port.
   dynamic "load_balancer" {
-    for_each = local.ecs.service_ports[count.index]
-    content {
-      target_group_arn = var.sidecar_lb_target_group_arns[(count.index * 5) + load_balancer.key]
-      container_name   = local.ecs.container_name
-      container_port   = load_balancer.value
+      for_each = aws_lb_target_group.sidecar_tg
+      content {
+        target_group_arn = load_balancer.value.arn
+        container_name   = local.ecs.container_name
+        container_port   = load_balancer.value.port
+      }
     }
-  }
 }
