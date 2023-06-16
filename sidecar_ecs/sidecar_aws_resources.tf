@@ -17,7 +17,8 @@ data "aws_region" "current" {}
 
 # Repo Creds - This assumes its the encoded value provided from the Cyral Control Plane
 resource "aws_secretsmanager_secret" "repo_creds" {
-  name                    = "cyral/repo-creds-${local.sidecar.name_prefix}"
+  name                    = "/cyral/sidecars/${var.sidecar_id}/secrets"
+  
   recovery_window_in_days = 0
 }
 
