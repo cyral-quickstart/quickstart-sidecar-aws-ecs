@@ -5,7 +5,7 @@ locals {
     username = "_json_key"
     password = "${local.keyData}"
   })
-  sidecarSecret = jsonencode({
+  sidecarCredentials = jsonencode({
     clientId     = var.client_id
     clientSecret = var.client_secret
   })
