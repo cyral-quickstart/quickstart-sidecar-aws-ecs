@@ -13,7 +13,7 @@ locals {
       # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/private-auth.html
       repositoryCredentials = (
         {
-          credentialsParameter = aws_secretsmanager_secret.repo_creds.arn
+          credentialsParameter = aws_secretsmanager_secret.container_registry_credentials.arn
         }
       )
       cpu       = var.ecs_cpu

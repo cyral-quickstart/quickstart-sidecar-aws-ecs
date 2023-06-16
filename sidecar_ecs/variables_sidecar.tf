@@ -41,4 +41,3 @@ variable "sidecar_dns_name" {
   description = "The fully qualified sidecar domain name. If there's no DNS for the sidecar, use the load balancer DNS instead."
   type        = string
 }
-
