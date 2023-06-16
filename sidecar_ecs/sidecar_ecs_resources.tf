@@ -40,7 +40,7 @@ resource "aws_security_group" "sidecar_sg" {
     from_port   = 9000
     to_port     = 9000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = var.monitoring_inbound_cidr
   }
 
   dynamic "ingress" {
@@ -49,7 +49,7 @@ resource "aws_security_group" "sidecar_sg" {
       from_port   = ingress.value
       to_port     = ingress.value
       protocol    = "tcp"
-      cidr_blocks = ["0.0.0.0/0"]
+      cidr_blocks = var.db_inbound_cidr
     }
   }
 

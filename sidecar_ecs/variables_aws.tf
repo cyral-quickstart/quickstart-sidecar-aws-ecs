@@ -8,3 +8,9 @@ variable "load_balancer_scheme" {
   type        = string
   default     = "internal"
 }
+
+variable "monitoring_inbound_cidr" {
+  description = "CIDR allowed to access the monitoring port"
+  type        = list(string)
+  default     = ["0.0.0.0/0"]
+}
