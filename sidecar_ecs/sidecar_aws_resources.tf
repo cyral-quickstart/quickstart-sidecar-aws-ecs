@@ -81,7 +81,7 @@ resource "aws_iam_policy" "cyral_sidecar_ecs_policy" {
           "logs:PutLogEvents"
         ],
         "Resource" : [
-          "arn:aws:secretsmanager:*:*:secret:cyral/*",
+          "arn:aws:secretsmanager:*:*:secret:/cyral/*",
           "arn:aws:ssm:*:*:parameter/cyral/*",
           "arn:aws:logs:*:*:*"
         ]
