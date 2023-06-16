@@ -12,7 +12,7 @@ locals {
 
 }
 
-# juse use current aws region when region is required
+# just use current aws region when region is required
 data "aws_region" "current" {}
 
 # Repo Creds - This assumes its the encoded value provided from the Cyral Control Plane
