@@ -14,7 +14,7 @@ for specific data repositories and control the infrastructure in a way that best
 suits your needs.
 
 > In case you want to deploy a sidecar using AWS EC2 instead, please see
-> the [Cyral sidecar module for AWS EC2](https://github.com/cyralinc/terraform-cyral-sidecar-aws).
+> the [Cyral sidecar module for AWS EC2](https://github.com/cyralinc/terraform-aws-sidecar-ec).
 
 ## Usage
 
