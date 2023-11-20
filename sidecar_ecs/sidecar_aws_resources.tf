@@ -1,28 +1,8 @@
-locals {
-  keyData = base64decode(var.container_registry_key)
-
-  containerRegistryCredentials = jsonencode({
-    username = "_json_key"
-    password = "${local.keyData}"
-  })
-}
-
 # just use current aws region when region is required
 data "aws_region" "current" {}
 
 # Get account id for policy creation
 data "aws_caller_identity" "current" {}
-
-# container registry credentials - This assumes its the encoded value provided from the Cyral Control Plane
-resource "aws_secretsmanager_secret" "container_registry_credentials" {
-  name                    = "/cyral/sidecars/${var.sidecar_id}/secrets"
-  recovery_window_in_days = 0
-}
-
-resource "aws_secretsmanager_secret_version" "container_registry_credentials_version" {
-  secret_id     = aws_secretsmanager_secret.container_registry_credentials.id
-  secret_string = local.containerRegistryCredentials
-}
 
 # Sidecar Client ID/Secret stores in SSM
 resource "aws_ssm_parameter" "sidecar_client_id" {
@@ -79,7 +59,7 @@ resource "aws_iam_policy" "cyral_sidecar_ecs_policy" {
         ],
         "Resource" : [
           "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:/cyral/*",
-          "arn:aws:ssm:*:*:parameter/cyral/*",
+          "arn:aws:ssm:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:parameter/cyral/*",
           "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
         ]
       }

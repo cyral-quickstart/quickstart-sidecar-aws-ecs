@@ -41,14 +41,8 @@ variable "ecs_service_desired_count" {
 
 variable "container_registry" {
   description = "The container registry where the sidecar image is stored."
-  default     = "gcr.io/cyralinc"
+  default     = "public.ecr.aws/cyral"
   type        = string
-}
-
-variable "container_registry_key" {
-  description = "The registry key provided by the cyral control plane"
-  type        = string
-  sensitive   = true
 }
 
 variable "ecs_container_name" {

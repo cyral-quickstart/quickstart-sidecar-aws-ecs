@@ -24,13 +24,14 @@ suits your needs.
 1. Create a sidecar_values.tfvars file in with the following content:
 
     ```hcl
+    # The following values are provided from the `Generate Deployment Parameters`
+    # button from the sidecar deployment tab:
+    sidecar_id = "<sidecar id>"
     control_plane = "<tenant>.app.cyral.com"
-    # Values from the sidecar creation
     client_id = "<client id>"
     client_secret = "<client secret>"
-    sidecar_id = "<sidecar id>"
-    sidecar_version = "v4.7.0" # Use the version provided by the control plane
-    container_registry_key = "<container registry key>" 
+
+    sidecar_version = "v4.10.0" # Use the version shown in the control plane
 
     # The list of ports you want to expose on the sidecar
     sidecar_ports = [ 5432 ]

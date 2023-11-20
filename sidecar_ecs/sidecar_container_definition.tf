@@ -1,4 +1,5 @@
 locals {
+  sidecar_endpoint = var.sidecar_dns_name != "" ? var.sidecar_dns_name : aws_lb.sidecar_nlb.dns_name
   container_definition = [
     {
       # The sidecar container name
@@ -6,16 +7,6 @@ locals {
       # The image for a specific sidecar version, thats
       # stored in the container registry.
       image     = "${var.container_registry}/cyral-sidecar:${var.sidecar_version}"
-      # The ARN of the AWS Secret Manager that stores
-      # the registry credentials. For more details about
-      # the format of the secret, see the AWS documentation
-      # for Private registry authentication for tasks:
-      # https://docs.aws.amazon.com/AmazonECS/latest/developerguide/private-auth.html
-      repositoryCredentials = (
-        {
-          credentialsParameter = aws_secretsmanager_secret.container_registry_credentials.arn
-        }
-      )
       cpu       = var.ecs_cpu
       memory    = var.ecs_memory
       essential = true
@@ -55,7 +46,7 @@ locals {
         },
         { 
           "name"  = "CYRAL_SIDECAR_ENDPOINT"
-          "value" = var.sidecar_dns_name
+          "value" = local.sidecar_endpoint
         },
       ]
       # Define the log configuration, where sidecar will ship
