@@ -38,7 +38,7 @@ variable "sidecar_ports" {
 }
 
 variable "sidecar_dns_name" {
-  description = "The fully qualified sidecar domain name. If there's no DNS for the sidecar, use the load balancer DNS instead."
+  description = "The fully qualified sidecar domain name. If no DNS for the sidecar is provided, it will assume the load balancer DNS instead."
   type        = string
   default     = ""
 }
