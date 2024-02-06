@@ -5,7 +5,7 @@
 This guide explains how to deploy a basic sidecar on AWS using
 the ECS service. This example provides only the necessary configuration to
 deploy a sidecar container. For a more complete example, please see the
-[Cyral Single Container Sidecar](https://cyral.com/docs/sidecars/singlecontainer/install)
+[Cyral DIY Deployment](https://cyral.com/docs/sidecars/deployment/#custom-deployment-diy)
 documentation.
 
 By following the steps of this guide, you will deploy a sidecar container using
