@@ -18,7 +18,7 @@ suits your needs.
 
 ## Usage
 
-1. From your control plane (https://<tenant>.app.cyral.com) create a new sidecar and select Custom as the deployment type.
+1. From your control plane (https://_tenant_.app.cyral.com) create a new sidecar and select Custom as the deployment type.
 1. Save the infromation for the steps below.
 1. Clone this repository and go to the `sidecar_ecs` directory.
 1. Create a sidecar_values.tfvars file in with the following content:
@@ -37,7 +37,7 @@ suits your needs.
     sidecar_ports = [ 5432 ]
 
     # provide the VPC you want the sidecar to reside in
-    sidecar_vpc_id = "vpc-xxxxxx"
+    vpc_id = "vpc-xxxxxx"
     ```
 
 1. Run `terraform init`

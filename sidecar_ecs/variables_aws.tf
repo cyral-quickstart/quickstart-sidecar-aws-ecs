@@ -1,6 +1,13 @@
-variable "sidecar_vpc_id" {
+variable "vpc_id" {
   description = "The VPC ID of the sidecar subnets."
   type        = string
+}
+
+variable "subnet_ids" {
+  type = list(string)
+  description = "The list of subnets the ECS service and loadbalancer will use. If no value is provided it will attempt to us all subnets on the VPC"
+  default = null
+
 }
 
 variable "load_balancer_scheme" {
