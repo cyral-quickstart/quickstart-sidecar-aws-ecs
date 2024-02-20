@@ -1,7 +1,3 @@
-locals {
-  selected_subnets = coalesce(var.subnet_ids, data.aws_subnets.all_subnets.ids)
-}
-
 # If the cluster_name is set, it will retrieve the existent
 # cluster and use it to deploy the sidecar.
 data "aws_ecs_cluster" "existent_cluster" {
@@ -9,13 +5,6 @@ data "aws_ecs_cluster" "existent_cluster" {
   cluster_name = var.ecs_cluster_name
 }
 
-# Use all subnets within the VPC
-data "aws_subnets" "all_subnets" {
-  filter {
-    name   = "vpc-id"
-    values = [var.vpc_id]
-  }
-}
 # If the cluster_name is empty, it will create a new ECS
 # cluster and use it to deploy the sidecar.
 resource "aws_ecs_cluster" "sidecar_cluster" {
@@ -70,7 +59,7 @@ resource "aws_lb" "sidecar_nlb" {
   name                       = "sidecar-nlb"
   load_balancer_type         = "network"
   internal                   =  var.load_balancer_scheme == "internet-facing" ? false : true
-  subnets                    = local.selected_subnets
+  subnets                    = var.subnet_ids
   enable_deletion_protection = false
   tags = {
     Name = "${local.sidecar.name_prefix}-sidecar-container-sg"
@@ -129,7 +118,7 @@ resource "aws_ecs_service" "sidecar_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = local.selected_subnets
+    subnets          = var.subnet_ids
     security_groups  = [aws_security_group.sidecar_sg.id]
     assign_public_ip = true
   }
