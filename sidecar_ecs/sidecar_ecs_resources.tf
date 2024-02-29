@@ -59,7 +59,7 @@ resource "aws_lb" "sidecar_nlb" {
   name                       = "sidecar-nlb"
   load_balancer_type         = "network"
   internal                   =  var.load_balancer_scheme == "internet-facing" ? false : true
-  subnets                    = var.subnet_ids
+  subnets                    = var.subnets
   enable_deletion_protection = false
   tags = {
     Name = "${local.sidecar.name_prefix}-sidecar-container-sg"
@@ -97,8 +97,8 @@ resource "aws_lb_target_group" "sidecar_tg" {
 # the container definitions.
 resource "aws_ecs_task_definition" "sidecar_task_definition" {
   family                   = "${local.sidecar.name_prefix}-sidecar-task"
-  execution_role_arn       = aws_iam_role.sidecar_ecs_role.arn
-  #task_role_arn            = var.sidecar_iam_role_arn
+  execution_role_arn       = aws_iam_role.ecs_role.arn
+  task_role_arn            = aws_iam_role.ecs_task_role.arn
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = var.ecs_cpu
@@ -118,7 +118,7 @@ resource "aws_ecs_service" "sidecar_service" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = var.subnet_ids
+    subnets          = var.subnets
     security_groups  = [aws_security_group.sidecar_sg.id]
     assign_public_ip = true
   }

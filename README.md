@@ -38,7 +38,7 @@ suits your needs.
 
     # provide the VPC you want the sidecar to reside in
     vpc_id = "vpc-xxxxxx"
-    subnet_ids = [ "subnet-123", "subnet-456" ]
+    subnets = [ "subnet-123", "subnet-456" ]
     ```
 
 1. Run `terraform init`

@@ -3,7 +3,7 @@ variable "vpc_id" {
   type        = string
 }
 
-variable "subnet_ids" {
+variable "subnets" {
   type = list(string)
   description = "The list of subnets the ECS service and loadbalancer will use. If no value is provided it will attempt to us all subnets on the VPC"
 }

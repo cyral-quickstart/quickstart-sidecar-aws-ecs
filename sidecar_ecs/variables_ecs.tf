@@ -24,13 +24,13 @@ variable "ecs_cluster_name" {
 variable "ecs_cpu" {
   description = "The CPU units used by the ECS service and task."
   type        = number
-  default     = 2048
+  default     = 1024
 }
 
 variable "ecs_memory" {
   description = "The amount of memory used by the ECS service and task."
   type        = number
-  default     = 4096
+  default     = 2048
 }
 
 variable "ecs_service_desired_count" {
