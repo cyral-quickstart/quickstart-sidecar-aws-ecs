@@ -30,7 +30,7 @@ variable "ecs_cpu" {
 variable "ecs_memory" {
   description = "The amount of memory used by the ECS service and task."
   type        = number
-  default     = 2048
+  default     = 4096
 }
 
 variable "ecs_service_desired_count" {
