@@ -28,6 +28,9 @@ resource "aws_ecs_cluster_capacity_providers" "sidecar_capacity_provider" {
 resource "aws_security_group" "sidecar_sg" {
   name        = "${local.sidecar.name_prefix}-sidecar-container-sg"
   description = "Allow inbound access to sidecar ports"
+
+  vpc_id = var.vpc_id
+
   # Allow the healthcheck to work
   ingress {
     from_port   = 9000
