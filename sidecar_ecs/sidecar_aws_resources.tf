@@ -59,6 +59,11 @@ resource "aws_iam_role" "ecs_role" {
   }
 }
 
+# Attach the default ECS Execution Policy
+resource "aws_iam_role_policy_attachment" "default_execution_policy" {
+  role = aws_iam_role.ecs_role.name
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
 resource "aws_iam_role" "ecs_task_role" {
   name = "cyral_sidecar_ecs_task_role"
   assume_role_policy = jsonencode({
@@ -82,14 +87,10 @@ resource "aws_iam_role" "ecs_task_role" {
         {
           "Effect" : "Allow",
           "Action" : [
-            "secretsmanager:GetSecretValue",
-            "logs:CreateLogGroup",
-            "logs:CreateLogStream",
-            "logs:PutLogEvents"
+            "secretsmanager:GetSecretValue"
           ],
           "Resource" : [
-            "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:/cyral/*",
-            "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:*"
+            "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:/cyral/*"
           ]
         }
       ]
