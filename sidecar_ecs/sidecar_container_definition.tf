@@ -1,15 +1,17 @@
+data "aws_caller_identity" "me" {}
+
 locals {
   sidecar_endpoint = var.sidecar_dns_name != "" ? var.sidecar_dns_name : aws_lb.sidecar_nlb.dns_name
   container_definition = [
     {
       # The sidecar container name
-      name      = local.ecs.container_name
+      name = local.ecs.container_name
       # The image for a specific sidecar version, thats
       # stored in the container registry.
-      image     = "${var.container_registry}/cyral-sidecar:${var.sidecar_version}"
-      cpu       = var.ecs_cpu
-      memory    = var.ecs_memory
-      essential = true
+      image        = "${var.container_registry}/cyral-sidecar:${var.sidecar_version}"
+      cpu          = var.ecs_cpu
+      memory       = var.ecs_memory
+      essential    = true
       portMappings = local.ecs.container_ports_mappings
       ulimits = [
         {
@@ -44,9 +46,26 @@ locals {
           "name"  = "CYRAL_SIDECAR_VERSION"
           "value" = var.sidecar_version
         },
-        { 
+        {
           "name"  = "CYRAL_SIDECAR_ENDPOINT"
           "value" = local.sidecar_endpoint
+        },
+        {
+          "name"  = "CYRAL_SIDECAR_DEPLOYMENT_METHOD"
+          "value" = "ecs"
+        },
+        {
+          "name" = "CYRAL_SIDECAR_DEPLOYMENT_PROPERTIES"
+          "value" = jsonencode({
+            "cloud"      = "aws"
+            "endpoint"   = local.sidecar_endpoint
+            "account-id" = data.aws_caller_identity.me.account_id
+            "region"     = data.aws_region.current.name
+          })
+        },
+        {
+          "name"  = "CYRAL_SIDECAR_CLOUD_PROVIDER"
+          "value" = "aws"
         },
       ]
       # Define the log configuration, where sidecar will ship
@@ -54,8 +73,8 @@ locals {
       # AWS documentation for ECS Log Configuration:
       # https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_LogConfiguration.html
       logConfiguration = {
-        logDriver     = "awslogs",
-        options       = {
+        logDriver = "awslogs",
+        options = {
           "awslogs-create-group"  = "true",
           "awslogs-group"         = "/ecs/${local.ecs.container_name}/",
           "awslogs-region"        = data.aws_region.current.name,
@@ -65,3 +84,4 @@ locals {
     },
   ]
 }
+
