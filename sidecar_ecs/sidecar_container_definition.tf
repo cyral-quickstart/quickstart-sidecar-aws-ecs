@@ -59,7 +59,7 @@ locals {
           "value" = jsonencode({
             "cloud"      = "aws"
             "endpoint"   = local.sidecar_endpoint
-            "account-id" = data.aws_caller_identity.me.account_id
+            "account-id" = data.aws_caller_identity.current.account_id
             "region"     = data.aws_region.current.name
           })
         },
