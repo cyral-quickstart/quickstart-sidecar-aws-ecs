@@ -50,13 +50,13 @@ locals {
         },
         {
           "name" = "CYRAL_SIDECAR_DEPLOYMENT_PROPERTIES"
-          "value" = jsonencode({
+          "value" = "'${jsonencode({
             "cloud"          = "aws"
             "endpoint"       = local.sidecar_endpoint
-            "accountId"     = data.aws_caller_identity.current.account_id
+            "accountId"      = data.aws_caller_identity.current.account_id
             "region"         = data.aws_region.current.name
             "deploymentType" = "quickstart-terraform-aws-ecs"
-          })
+          })}'"
         },
         {
           "name"  = "CYRAL_SIDECAR_CLOUD_PROVIDER"
