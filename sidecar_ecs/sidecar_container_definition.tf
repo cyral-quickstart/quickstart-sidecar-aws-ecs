@@ -51,22 +51,13 @@ locals {
           "value" = local.sidecar_endpoint
         },
         {
-          "name"  = "CYRAL_SIDECAR_DEPLOYMENT_METHOD"
-          "value" = "terraform"
-        },
-        {
-          "name"  = "CYRAL_SIDECAR_DEPLOYMENT_PLATFORM"
-          "value" = "ecs"
-        },
-        {
           "name" = "CYRAL_SIDECAR_DEPLOYMENT_PROPERTIES"
           "value" = jsonencode({
-            "cloud"              = "aws"
-            "endpoint"           = local.sidecar_endpoint
-            "account-id"         = data.aws_caller_identity.current.account_id
-            "region"             = data.aws_region.current.name
-            "deploymentMethod"   = "terraform"
-            "deploymentPlatform" = "ecs"
+            "cloud"          = "aws"
+            "endpoint"       = local.sidecar_endpoint
+            "account-id"     = data.aws_caller_identity.current.account_id
+            "region"         = data.aws_region.current.name
+            "deploymentType" = "quickstart-terraform-aws-ecs"
           })
         },
         {
