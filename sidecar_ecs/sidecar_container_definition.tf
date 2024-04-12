@@ -1,4 +1,4 @@
-data "aws_caller_identity" "me" {}
+data "aws_caller_identity" "current" {}
 
 locals {
   sidecar_endpoint = var.sidecar_dns_name != "" ? var.sidecar_dns_name : aws_lb.sidecar_nlb.dns_name
