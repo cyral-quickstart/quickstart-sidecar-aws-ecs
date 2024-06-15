@@ -53,7 +53,7 @@ locals {
           "value" = "'${jsonencode({
             "account-id"      = data.aws_caller_identity.current.account_id
             "region"          = data.aws_region.current.name
-            "deployment-type" = "quickstart-terraform-aws-ecs"
+            "deployment-type" = "terraform-ecs"
           })}'"
         },
         {
