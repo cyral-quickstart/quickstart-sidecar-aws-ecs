@@ -1,51 +1,86 @@
-# quickstart-sidecar-aws-ecs
+# Sidecar - Terraform AWS ECS
 
-## Deploy a single container sidecar on AWS ECS
+A quick start to deploy a sidecar to AWS EC2 using Terraform!
 
-This guide explains how to deploy a basic sidecar on AWS using
-the ECS service. This example provides only the necessary configuration to
-deploy a sidecar container. For a more complete example, please see the
+This guide explains how to deploy a basic sidecar on AWS using ECS Fargate.
+This example provides only the necessary configuration to
+deploy a sidecar container. For more details, please read the
 [Cyral DIY Deployment](https://cyral.com/docs/sidecars/deployment/#custom-deployment-diy)
 documentation.
 
-By following the steps of this guide, you will deploy a sidecar container using
-a Fargate instance into an ECS cluster. You'll be able to configure the sidecar
-for specific data repositories and control the infrastructure in a way that best
-suits your needs.
+By following the steps of this guide, you will deploy a sidecar to ECS Fargate.
 
-> In case you want to deploy a sidecar using AWS EC2 instead, please see
-> the [Cyral sidecar module for AWS EC2](https://github.com/cyralinc/terraform-aws-sidecar-ec2).
+> If you prefer to deploy a sidecar to AWS EC2 instead, see
+> our [Terraform AWS EC2 Quickstart](https://github.com/cyralinc/terraform-aws-sidecar-ec2).
 
-## Usage
+---
 
-1. From your control plane (https://_tenant_.app.cyral.com) create a new sidecar and select Custom as the deployment type.
-1. Save the information for the steps below.
-1. Clone this repository and go to the `sidecar_ecs` directory.
-1. Create a sidecar_values.tfvars file in with the following content:
+## Deployment
 
-    ```hcl
-    # The following values are provided from the `Generate Deployment Parameters`
-    # button from the sidecar deployment tab:
-    sidecar_id = "<sidecar id>"
-    control_plane = "<tenant>.app.cyral.com"
-    client_id = "<client id>"
-    client_secret = "<client secret>"
+### Architecture
 
-    sidecar_version = "v4.10.0" # Use the version shown in the control plane
+![Deployment architecture](./images/aws_architecture.png)
 
-    # The list of ports you want to expose on the sidecar
-    sidecar_ports = [ 5432 ]
+### Examples
 
-    # provide the VPC you want the sidecar to reside in
-    vpc_id = "vpc-xxxxxx"
-    subnets = [ "subnet-123", "subnet-456" ]
-    ```
+#### Quick Start
 
-1. Run `terraform init`
-1. Run `terraform apply -var-file=sidecar_values.tfvars`
+* Save the code below in a `.tf` file (ex `sidecar.tf`) in a new folder.
+    * Fill the parameters `sidecar_id`, `control_plane`, `client_id` and 
+    `client_secret` with the information from the `Cyral Templates` option
+    in the `Deployment` tab of your sidecar details.
+    * Fill the parameters `vpc_id` and `subnets` with an existing VPC and subnets that allows 
+    network connectivity to the Cyral control plane (outbound HTTPS and gRPC traffic using port `443`)
+    and to the database you plan to protect with this sidecar.
 
-After a few minutes you'll see your sidecar instance in the control plane.
+* Open a command line terminal in the new folder.
+* Configure the AWS CLI credentials or provide them through environment variables.
+* Run `terraform init` followed by `terraform apply`.
 
-## Additional Configuration
+```hcl
+provider "aws" {
+  # Define the target AWS region
+  region = "us-east-1"
+}
 
-There are additional options you can configure in the `sidecar_values.tfvars` that are defined in the `variables_*.tf` files.
+module "cyral_sidecar" {
+  source = "github.com/cyral-quickstart/quickstart-sidecar-aws-ecs"
+  version = "main"
+
+  sidecar_version = "v4.15.0"
+
+  sidecar_id    = ""
+  control_plane = ""
+  client_id     = ""
+  client_secret = ""
+
+  # The ports that the sidecar will allow for incoming connections.
+  # The set of ports below includes the default ports for all of
+  # our currently supported repositories and considers MongoDB
+  # ports in the range from 27017 to 27019.
+  sidecar_ports = [
+    443, 453, 1433, 1521, 3306, 5432, 5439, 9996, 9999,
+    27017, 27018, 27019, 31010
+  ]
+  vpc_id  = "<vpc-id>"
+  subnets = ["<subnet-id>"]
+
+  #############################################################
+  #                       DANGER ZONE
+  # The following parameters will expose your sidecar to the
+  # internet. This is a quick set up to test with databases
+  # containing dummy data. Never use this configuration if you
+  # are binding your sidecar to a database that contains any
+  # production/real data unless you understand all the
+  # implications and risks involved.
+
+  # If you provided private subnets, set this to `false`
+  associate_public_ip_address = true
+
+  # Unrestricted inbound to ports defined in `sidecar_ports`
+  db_inbound_cidr         = ["0.0.0.0/0"]
+  # Unrestricted inbound to monitor EC2 instances (port 9000)
+  monitoring_inbound_cidr = ["0.0.0.0/0"]
+  #############################################################
+}
+```
