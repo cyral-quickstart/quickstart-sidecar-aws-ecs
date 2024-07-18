@@ -15,6 +15,24 @@ locals {
   }
 }
 
+variable "container_registry" {
+  description = "The container registry where the sidecar image is stored."
+  default     = "public.ecr.aws/cyral"
+  type        = string
+}
+
+variable "ecs_assign_public_ip" {
+  description = "Assign a public IP to sidecar ECS services"
+  type        = bool
+  default     = false
+}
+
+variable "ecs_container_name" {
+  description = "The name of the sidecar container. If not specified it will use a default name with the format {name_prefix}-sidecar-container."
+  type        = string
+  default     = ""
+}
+
 variable "ecs_cluster_name" {
   description = "The name of an existent ECS cluster where the sidecar will be deployed. If this parameter is empty, a new cluster will be created with a default name with the format {name_prefix}-sidecar-cluster."
   type        = string
@@ -37,16 +55,4 @@ variable "ecs_service_desired_count" {
   description = "The number of instances of the sidecar task definition to place and keep running."
   type        = number
   default     = 1
-}
-
-variable "container_registry" {
-  description = "The container registry where the sidecar image is stored."
-  default     = "public.ecr.aws/cyral"
-  type        = string
-}
-
-variable "ecs_container_name" {
-  description = "The name of the sidecar container. If not specified it will use a default name with the format {name_prefix}-sidecar-container."
-  type        = string
-  default     = ""
 }
