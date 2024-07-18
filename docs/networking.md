@@ -35,7 +35,7 @@ tasks will be instantiated, or `6` sidecar *instances* will be running.
 
 To deploy an entirely public sidecar, use the following parameters:
 
-* `subnets`: provide public subnets in the same VPC. These subnets will be used for both the EC2
+* `subnets`: provide public subnets in the same VPC. These subnets will be used for both the ECS
 instances and the load balancer. All the provided subnets must allow the allocation of public IPs
 and have a route to an internet gateway to enable internet access.
 * `load_balancer_scheme`: set to `"internet-facing"`.
@@ -45,7 +45,7 @@ and have a route to an internet gateway to enable internet access.
 
 To deploy an entirely private sidecar, use the following parameters:
 
-* `subnets`: provide private subnets in the same VPC. These subnets will be used for both the EC2
+* `subnets`: provide private subnets in the same VPC. These subnets will be used for both the ECS
 instances and the load balancer. All the provided subnets must have a route to the internet
 through a NAT gateway.
 * `load_balancer_scheme`: set to `"internal"` (this is the default value).
@@ -55,7 +55,7 @@ through a NAT gateway.
 
 To deploy a public load balancer and private ECS tasks, use the following parameters:
 
-* `subnets`: provide private subnets in the same VPC. These subnets will be used only for the EC2
+* `subnets`: provide private subnets in the same VPC. These subnets will be used only for the ECS
 instances. All the provided subnets must have a route to the internet through a NAT gateway.
 * `load_balancer_subnets`: provide public subnets in the same VPC and the same AZs as those in
 parameter `subnets`. These subnets will be used only for the load balancer. All the provided 

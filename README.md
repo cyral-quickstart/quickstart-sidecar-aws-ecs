@@ -2,24 +2,45 @@
 
 A quick start to deploy a sidecar to AWS EC2 using Terraform!
 
-This guide explains how to deploy a basic sidecar on AWS using ECS Fargate.
+This guide explains how to deploy a basic sidecar on AWS using ECS.
 This example provides only the necessary configuration to
 deploy a sidecar container. For more details, please read the
 [Cyral DIY Deployment](https://cyral.com/docs/sidecars/deployment/#custom-deployment-diy)
 documentation.
 
-By following the steps of this guide, you will deploy a sidecar to ECS Fargate.
+By following the steps of this guide, you will deploy a sidecar to ECS.
 
 > If you prefer to deploy a sidecar to AWS EC2 instead, see
 > our [Terraform AWS EC2 Quickstart](https://github.com/cyralinc/terraform-aws-sidecar-ec2).
 
 ---
 
-## Deployment
-
-### Architecture
+## Architecture
 
 ![Deployment architecture](./images/aws_architecture.png)
+
+---
+
+## Deployment
+
+The elements shown in the architecture diagram above are deployed by this module and it requires existing VPC and subnets in order to create the necessary components for the sidecar to run. In a high-level, these are the resources deployed:
+
+* ECS
+    * Cluster (optional)
+    * Services
+    * Task definitions
+* EC2
+    * Network load balancer
+    * Security group
+* Systems Manager Parameter Store
+    * Sidecar credentials
+* IAM
+    * Sidecar role
+
+### Requirements
+
+* Make sure you have access to your AWS environment with an account that has sufficient permissions to deploy the sidecar. The minimum permissions must allow for the creation of the elements listed previously. We recommend Administrator permissions (`AdministratorAccess` policy) as the module creates an IAM role.
+* Decide your certificate deployment type. Refer to the [Sidecar certificates](./docs/certificates.md) document for additional guidance.
 
 ### Examples
 
@@ -152,7 +173,7 @@ The example above will create a production-grade configuration and assumes you u
 the basic concepts of a Cyral sidecar.
 
 For a production configuration, we recommend that you provide multiple subnets in different
-availability zones and properly assess the dimensions and number of EC2 instances required
+availability zones and properly assess the dimensions and number of ECS instances required
 for your production workload.
 
 In order to properly secure your sidecar, define appropriate inbound CIDRs using variables
@@ -161,7 +182,7 @@ In order to properly secure your sidecar, define appropriate inbound CIDRs using
 In case the databases you are protecting with the Cyral sidecar also live on AWS, make sure to
 add the sidecar security group (see output parameter `security_group_id`) to the list of
 allowed inbound rules in the databases' security groups. If the databases do not live on AWS,
-analyze what is the proper networking configuration to allow connectivity from the EC2
+analyze what is the proper networking configuration to allow connectivity from the ECS
 instances to the protected databases.
 
 ---
