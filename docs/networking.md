@@ -18,9 +18,10 @@ configuration.
 
 ## Opening more than 5 ports
 
-ECS imposes a hard limit of 5 target groups per service. This means that if you need to
-use more than 5 ports, the module will automatically create new service definitions for
-each group of up to 5 ports. Use the following parameters to configure more sidecar ports:
+ECS imposes a hard limit of 5 target groups per service and EC2 imposes a hard limit of 50 listeners
+per NLB. This means that if you need to use more than 5 ports (and less than 50), the module will
+automatically create new service definitions for each group of up to 5 ports. Use the following
+parameters to configure more sidecar ports:
 
 * `sidecar_ports`: the list of ports that will be opened at the load balancer.
 

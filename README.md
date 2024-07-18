@@ -10,6 +10,7 @@ documentation.
 
 By following the steps of this guide, you will deploy a sidecar to ECS.
 
+> [!NOTE]
 > If you prefer to deploy a sidecar to AWS EC2 instead, see
 > our [Terraform AWS EC2 Quickstart](https://github.com/cyralinc/terraform-aws-sidecar-ec2).
 
