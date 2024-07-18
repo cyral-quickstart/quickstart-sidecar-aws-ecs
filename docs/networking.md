@@ -55,7 +55,6 @@ through a NAT gateway.
 
 To deploy a public load balancer and private ECS tasks, use the following parameters:
 
-`subnets` and `load_balancer_subnets`.
 * `subnets`: provide private subnets in the same VPC. These subnets will be used only for the EC2
 instances. All the provided subnets must have a route to the internet through a NAT gateway.
 * `load_balancer_subnets`: provide public subnets in the same VPC and the same AZs as those in
