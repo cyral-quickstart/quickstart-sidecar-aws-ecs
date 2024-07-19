@@ -66,7 +66,7 @@ provider "aws" {
 }
 
 module "cyral_sidecar" {
-  source = "github.com/cyral-quickstart/quickstart-sidecar-aws-ecs?ref=v1.0.0"
+  source = "github.com/cyral-quickstart/quickstart-sidecar-terraform-aws-ecs?ref=v1.0.1"
 
   # Assign the version that will be used by the sidecar instances.
   sidecar_version = ""
@@ -129,7 +129,7 @@ provider "aws" {
 }
 
 module "cyral_sidecar" {
-  source = "github.com/cyral-quickstart/quickstart-sidecar-aws-ecs?ref=v1.0.0"
+  source = "github.com/cyral-quickstart/quickstart-sidecar-terraform-aws-ecs?ref=v1.0.1"
 
   # Assign the version that will be used by the sidecar instances.
   sidecar_version = ""
